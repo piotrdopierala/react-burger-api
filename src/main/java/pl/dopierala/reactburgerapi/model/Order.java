@@ -1,6 +1,8 @@
 package pl.dopierala.reactburgerapi.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Entity
@@ -15,7 +17,7 @@ public class Order {
     @JoinColumn
     private Customer customer;
     private String deliveryMethod;
-    private double price;
+    private BigDecimal price;
 
     public Order() {
     }
@@ -52,11 +54,11 @@ public class Order {
         this.deliveryMethod = deliveryMethod;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 }

@@ -11,6 +11,8 @@ import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.service.BurgerOrderService;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,11 +51,16 @@ public class BurgerOrderController {
                 .withSalad(ingredientsNode.get("salad").asInt())
                 .build();
 
+
         Order orderToSave = new Order();
         orderToSave.setCustomer(customerThatOrdered);
         orderToSave.setOrderedBurgers(Collections.singletonList(burgerToSave));
         orderToSave.setDeliveryMethod(responseNode.get("deliveryMethod").asText());
-        orderToSave.setPrice(responseNode.get("price").asDouble());
+        double price = responseNode.get("price").asDouble();
+        BigDecimal priceDecimal = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
+        orderToSave.setPrice(priceDecimal);
+
+        burgerToSave.setOrder(orderToSave);
 
         burgerOrderService.saveOrder(orderToSave);
     }
