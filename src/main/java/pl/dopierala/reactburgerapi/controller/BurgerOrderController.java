@@ -33,7 +33,7 @@ public class BurgerOrderController {
     }
 
     @PostMapping("/saveorder")
-    public void saveOrder(@RequestBody String receivedJSON) throws IOException {
+    public void saveOrder(@RequestBody String receivedJSON) throws IOException, InterruptedException {
 
         ObjectNode responseNode = mapper.readValue(receivedJSON,ObjectNode.class);
         JsonNode ingredientsNode = responseNode.get("ingredients");
@@ -63,6 +63,7 @@ public class BurgerOrderController {
         burgerToSave.setOrder(orderToSave);
 
         burgerOrderService.saveOrder(orderToSave);
+        Thread.sleep(4000);//only to check spinner functionality on front-end.
     }
 
 }
