@@ -22,8 +22,12 @@ public class BurgerOrderService {
     @Autowired
     private OrderRepo orderRepo;
 
-    public List<Burger> getOrders() {
+    public List<Burger> getBurgers() {
         return burgerRepo.findAll();
+    }
+
+    public List<Order> gerOrders(){
+        return orderRepo.findAll();
     }
 
     public void saveOrder(Order burger){

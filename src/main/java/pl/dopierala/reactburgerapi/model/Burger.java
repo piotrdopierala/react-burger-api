@@ -1,5 +1,9 @@
 package pl.dopierala.reactburgerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,6 +14,8 @@ public class Burger {
     private Long id;
     @ManyToOne
     @JoinColumn(name="order_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Order order;
     private int Salad;
     private int Bacon;

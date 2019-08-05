@@ -1,5 +1,9 @@
 package pl.dopierala.reactburgerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -14,7 +14,6 @@ import pl.dopierala.reactburgerapi.service.BurgerOrderService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +27,14 @@ public class BurgerOrderController {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    @GetMapping("/getburgers")
+    public List<Burger> getBurgers(){
+        return burgerOrderService.getBurgers();
+    }
+
     @GetMapping("/getorders")
-    public List<Burger> getOrders(){
-        return burgerOrderService.getOrders();
+    public List<Order> getOrders(){
+        return burgerOrderService.gerOrders();
     }
 
     @PostMapping("/saveorder")
