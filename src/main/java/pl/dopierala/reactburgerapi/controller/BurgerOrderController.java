@@ -5,17 +5,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.IngredientNotFound;
 import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.InsufficientDataException;
 import pl.dopierala.reactburgerapi.model.Burger;
 import pl.dopierala.reactburgerapi.model.Customer;
+import pl.dopierala.reactburgerapi.model.Ingredient;
 import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.service.BurgerOrderService;
+import pl.dopierala.reactburgerapi.service.IngredientService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/burger/api")
@@ -24,6 +29,9 @@ public class BurgerOrderController {
 
     @Autowired
     BurgerOrderService burgerOrderService;
+
+    @Autowired
+    IngredientService ingredientService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -45,18 +53,27 @@ public class BurgerOrderController {
         JsonNode customerNode = responseNode.get("customer");
 
         Customer customerThatOrdered = new Customer();
-        Burger burgerToSave;
+        Burger burgerToSave = new Burger();
         try {
             customerThatOrdered.setName(customerNode.get("name").asText());
             customerThatOrdered.setEmail(customerNode.get("email").asText());
             customerThatOrdered.setAddress(customerNode.get("address").asText());
 
-            burgerToSave = Burger.builder()
-                    .withBacon(ingredientsNode.get("bacon").asInt())
-                    .withCheese(ingredientsNode.get("cheese").asInt())
-                    .withMeat(ingredientsNode.get("meat").asInt())
-                    .withSalad(ingredientsNode.get("salad").asInt())
-                    .build();
+
+            Iterator<String> ingredientsIterator = ingredientsNode.fieldNames();
+            while(ingredientsIterator.hasNext()){
+                String ingredientName = ingredientsIterator.next();
+                int ingredientCount = ingredientsNode.get(ingredientName).asInt();
+                if(ingredientCount<=0){
+                    continue;
+                }
+                Optional<Ingredient> ingredientByName = ingredientService.getIngredientByName(ingredientName);
+                if(ingredientByName.isPresent()){
+                    burgerToSave.addIngredient(ingredientByName.get(),ingredientCount);
+                }else{
+                    throw new IngredientNotFound("Ingredient named '"+ingredientName+"' not found.");
+                }
+            }
         }
         catch (NullPointerException e){
             throw new InsufficientDataException("Insufficient order data received from front-end.");

@@ -6,6 +6,7 @@ import pl.dopierala.reactburgerapi.model.Ingredient;
 import pl.dopierala.reactburgerapi.repository.IngredientRepo;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IngredientService {
@@ -25,5 +26,7 @@ public class IngredientService {
         ingredientRepo.save(ingredientToAdd);
     }
 
-
+    public Optional<Ingredient> getIngredientByName(String name) {
+        return ingredientRepo.findByName(name);
+    }
 }

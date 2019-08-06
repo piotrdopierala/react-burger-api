@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name="burgers")
@@ -17,12 +21,23 @@ public class Burger {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private Order order;
-    private int Salad;
-    private int Bacon;
-    private int Cheese;
-    private int Meat;
+    //private int Salad;
+    //private int Bacon;
+    //private int Cheese;
+    //private int Meat;
+    @ElementCollection
+    @CollectionTable(
+            joinColumns = @JoinColumn(name="burger_id")
+    )
+    @Column(name="count")
+    @MapKeyJoinColumn(name="ingredient_id")
+    private Map<Ingredient,Integer> ingredients = new HashMap<>();
 
     public Burger() {
+    }
+
+    public void addIngredient(Ingredient ingredient, int amount){
+        ingredients.merge(ingredient, amount, Integer::sum);
     }
 
     public Order getOrder() {
@@ -41,68 +56,12 @@ public class Burger {
         this.id = id;
     }
 
-    public int getSalad() {
-        return Salad;
+    public Map<Ingredient, Integer> getIngredients() { //nie mozna persystowac takiej MAP gdzie key jest Entity, trzeba tworzyc dodatkowa encje
+        return ingredients;
     }
 
-    public void setSalad(int salad) {
-        Salad = salad;
-    }
-
-    public int getBacon() {
-        return Bacon;
-    }
-
-    public void setBacon(int bacon) {
-        Bacon = bacon;
-    }
-
-    public int getCheese() {
-        return Cheese;
-    }
-
-    public void setCheese(int cheese) {
-        Cheese = cheese;
-    }
-
-    public int getMeat() {
-        return Meat;
-    }
-
-    public void setMeat(int meat) {
-        Meat = meat;
-    }
-
-    public static BurgerBuilder builder() {
-        return new BurgerBuilder();
-    }
-
-    public static class BurgerBuilder {
-        private Burger newBurger = new Burger();
-
-        public BurgerBuilder withSalad(int salad) {
-            newBurger.setSalad(salad);
-            return this;
-        }
-
-        public BurgerBuilder withBacon(int bacon) {
-            newBurger.setBacon(bacon);
-            return this;
-        }
-
-        public BurgerBuilder withCheese(int cheese) {
-            newBurger.setCheese(cheese);
-            return this;
-        }
-
-        public BurgerBuilder withMeat(int meat) {
-            newBurger.setMeat(meat);
-            return this;
-        }
-
-        public Burger build() {
-            return newBurger;
-        }
+    public void setIngredients(Map<Ingredient, Integer> ingredients) {
+        this.ingredients = ingredients;
     }
 
 }

@@ -4,7 +4,9 @@ import org.springframework.data.repository.CrudRepository;
 import pl.dopierala.reactburgerapi.model.Ingredient;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IngredientRepo extends CrudRepository<Ingredient,Long> {
     List<Ingredient> findByOrderByPriceAsc();
+    Optional<Ingredient> findByName(String name);
 }
