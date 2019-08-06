@@ -1,4 +1,9 @@
-package pl.dopierala.reactburgerapi.model;
+package pl.dopierala.reactburgerapi.model.Ingredient;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -29,6 +34,7 @@ public class Ingredient {
         this.id = id;
     }
 
+    //@JsonValue
     public String getName() {
         return name;
     }

@@ -3,11 +3,12 @@ package pl.dopierala.reactburgerapi.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.Ingredient.IngredientSerializerIngrNameOnly;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -21,16 +22,13 @@ public class Burger {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private Order order;
-    //private int Salad;
-    //private int Bacon;
-    //private int Cheese;
-    //private int Meat;
     @ElementCollection
     @CollectionTable(
             joinColumns = @JoinColumn(name="burger_id")
     )
     @Column(name="count")
     @MapKeyJoinColumn(name="ingredient_id")
+    @JsonSerialize(keyUsing = IngredientSerializerIngrNameOnly.class)
     private Map<Ingredient,Integer> ingredients = new HashMap<>();
 
     public Burger() {

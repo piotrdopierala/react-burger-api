@@ -9,7 +9,7 @@ import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.Ingredient
 import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.InsufficientDataException;
 import pl.dopierala.reactburgerapi.model.Burger;
 import pl.dopierala.reactburgerapi.model.Customer;
-import pl.dopierala.reactburgerapi.model.Ingredient;
+import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.service.BurgerOrderService;
 import pl.dopierala.reactburgerapi.service.IngredientService;
