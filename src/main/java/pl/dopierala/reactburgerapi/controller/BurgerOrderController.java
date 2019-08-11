@@ -2,6 +2,7 @@ package pl.dopierala.reactburgerapi.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.Insufficie
 import pl.dopierala.reactburgerapi.model.Burger;
 import pl.dopierala.reactburgerapi.model.Customer;
 import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.Ingredient.IngredientSerializerIngrNameOnly;
 import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.service.BurgerOrderService;
 import pl.dopierala.reactburgerapi.service.IngredientService;
@@ -40,24 +42,19 @@ public class BurgerOrderController {
         return burgerOrderService.getBurgers();
     }
 
-    @GetMapping("/getorders")
-    public List<Order> getOrders(){
-        return burgerOrderService.gerOrders();
-    }
-
     @PostMapping("/saveorder")
     public void saveOrder(@RequestBody String receivedJSON) throws IOException, InterruptedException {
 
         ObjectNode responseNode = mapper.readValue(receivedJSON,ObjectNode.class);
         JsonNode ingredientsNode = responseNode.get("ingredients");
-        JsonNode customerNode = responseNode.get("customer");
+        JsonNode orderData = responseNode.get("orderData");
 
         Customer customerThatOrdered = new Customer();
         Burger burgerToSave = new Burger();
         try {
-            customerThatOrdered.setName(customerNode.get("name").asText());
-            customerThatOrdered.setEmail(customerNode.get("email").asText());
-            customerThatOrdered.setAddress(customerNode.get("address").asText());
+            customerThatOrdered.setName(orderData.get("name").asText());
+            customerThatOrdered.setEmail(orderData.get("email").asText());
+            customerThatOrdered.setAddress(orderData.get("street").asText());
 
 
             Iterator<String> ingredientsIterator = ingredientsNode.fieldNames();
@@ -82,7 +79,7 @@ public class BurgerOrderController {
         Order orderToSave = new Order();
         orderToSave.setCustomer(customerThatOrdered);
         orderToSave.setOrderedBurgers(Collections.singletonList(burgerToSave));
-        orderToSave.setDeliveryMethod(responseNode.get("deliveryMethod").asText());
+        orderToSave.setDeliveryMethod(orderData.get("deliveryMethod").asText());
         double price = responseNode.get("price").asDouble();
         BigDecimal priceDecimal = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
         orderToSave.setPrice(priceDecimal);
@@ -93,4 +90,8 @@ public class BurgerOrderController {
         Thread.sleep(1500);//only to check spinner functionality on front-end.
     }
 
+    @GetMapping("/getorders")
+    public List<Order> getOrders(){
+        return burgerOrderService.gerOrders();
+    }
 }

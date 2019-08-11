@@ -8,6 +8,7 @@ import pl.dopierala.reactburgerapi.repository.BurgerRepo;
 import pl.dopierala.reactburgerapi.repository.CustomerRepo;
 import pl.dopierala.reactburgerapi.repository.OrderRepo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
