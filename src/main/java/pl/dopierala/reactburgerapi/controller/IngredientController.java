@@ -22,7 +22,7 @@ public class IngredientController {
 
     @GetMapping("/getAll")
     public List<Ingredient> getAllIngredients() throws InterruptedException {
-        Thread.sleep(1500);//only to check spinner functionality on front-end.s
+        Thread.sleep(1500);//only to check spinner functionality on front-end.
         return  ingredientService.getAllIngredientsByPrice();
     }
 }

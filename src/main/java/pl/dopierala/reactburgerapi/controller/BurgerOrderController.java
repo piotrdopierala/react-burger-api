@@ -2,6 +2,7 @@ package pl.dopierala.reactburgerapi.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class BurgerOrderController {
     }
 
     @PostMapping("/saveorder")
-    public void saveOrder(@RequestBody String receivedJSON) throws IOException, InterruptedException {
+    public String saveOrder(@RequestBody String receivedJSON) throws IOException, InterruptedException {
 
         ObjectNode responseNode = mapper.readValue(receivedJSON,ObjectNode.class);
         JsonNode ingredientsNode = responseNode.get("ingredients");
@@ -88,6 +89,11 @@ public class BurgerOrderController {
 
         burgerOrderService.saveOrder(orderToSave);
         Thread.sleep(1500);//only to check spinner functionality on front-end.
+
+        ObjectNode objectNodeResponse = mapper.createObjectNode();
+        objectNodeResponse.put("OrderId",orderToSave.getId());
+
+        return objectNodeResponse.toString();
     }
 
     @GetMapping("/getorders")
