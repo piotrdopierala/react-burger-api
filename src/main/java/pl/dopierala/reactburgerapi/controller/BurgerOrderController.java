@@ -97,7 +97,8 @@ public class BurgerOrderController {
     }
 
     @GetMapping("/getorders")
-    public List<Order> getOrders(){
+    public List<Order> getOrders() throws InterruptedException {
+        Thread.sleep(1500); //simulate loading on front-end
         return burgerOrderService.gerOrders();
     }
 }
