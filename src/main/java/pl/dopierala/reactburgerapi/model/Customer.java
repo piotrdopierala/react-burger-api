@@ -11,6 +11,7 @@ public class Customer {
     private String name;
     private String address;
     private String email;
+    private String password;
     @OneToMany(mappedBy = "customer")
     @Column(name="order_id")
     private List<Order> order;
@@ -48,5 +49,13 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
