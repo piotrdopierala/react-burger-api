@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import pl.dopierala.reactburgerapi.model.Customer;
 import pl.dopierala.reactburgerapi.repository.CustomerRepo;
 
@@ -40,7 +41,7 @@ public class CustomerController {
             password = jsonNode.get("password").asText();
 
             if (customerRepo.existsByEmail(email)) {
-                return new ResponseEntity<>("Email already registered, please log in",HttpStatus.CONFLICT);
+                throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already registered, please log in");
             }
 
             Customer newCustomer = new Customer();
@@ -51,7 +52,7 @@ public class CustomerController {
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
         } else {
-            return new ResponseEntity<>("No email and/or password data passed in request", HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No email and/or password data passed in request");
         }
     }
 
