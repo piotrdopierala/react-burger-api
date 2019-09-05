@@ -36,14 +36,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.POST, LOGIN_PROCESS_URL).permitAll()
+                .antMatchers(HttpMethod.GET,"/burger/api/ingredient/getAll").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                    .permitAll()
-                    .usernameParameter("email")
-                    .passwordParameter("pass")
-                    .loginProcessingUrl(LOGIN_PROCESS_URL)
-                .and()
+                .formLogin().disable()
                 .csrf().disable()
                 .addFilterBefore(corsFilter(), CsrfFilter.class)
                 .addFilter(jwtAuthenticationFilter)
@@ -64,6 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         config.addAllowedOrigin(localOrigin);
         config.addAllowedMethod(CorsConfiguration.ALL);
         config.addAllowedHeader(CorsConfiguration.ALL);
+        config.addExposedHeader("Authorization");
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
