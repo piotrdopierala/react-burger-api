@@ -4,9 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 import pl.dopierala.reactburgerapi.model.Customer;
 import pl.dopierala.reactburgerapi.repository.CustomerRepo;
@@ -20,11 +25,13 @@ public class CustomerController {
     private CustomerRepo customerRepo;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private ObjectMapper objectMapper;
+    private AuthenticationManager authenticationManager;
 
-    public CustomerController(CustomerRepo customerRepo, BCryptPasswordEncoder bCryptPasswordEncoder, ObjectMapper objectMapper) {
+    public CustomerController(CustomerRepo customerRepo, BCryptPasswordEncoder bCryptPasswordEncoder, ObjectMapper objectMapper, AuthenticationManager authenticationManager) {
         this.customerRepo = customerRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.objectMapper = objectMapper;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/sign-up")
@@ -56,9 +63,9 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/authenticate")
-    public String authenticate(@RequestParam("email") String email, @RequestParam("pass") String password) {
-        return null;
+    @PostMapping("/login")
+    public ResponseEntity<String> authenticate() {
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     @GetMapping("/secured")

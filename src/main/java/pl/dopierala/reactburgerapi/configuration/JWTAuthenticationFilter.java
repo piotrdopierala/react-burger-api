@@ -2,12 +2,16 @@ package pl.dopierala.reactburgerapi.configuration;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.server.ResponseStatusException;
 import pl.dopierala.reactburgerapi.model.Customer;
 
 import javax.servlet.FilterChain;
@@ -29,16 +33,27 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
-        try {
-            Customer cust = new ObjectMapper().readValue(req.getInputStream(), Customer.class);
 
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    cust.getEmail(),
-                    cust.getPassword()
-            ));
+        JsonNode reqBodyNode;
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            reqBodyNode = objectMapper.readTree(req.getReader());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON");
         }
+
+        if (!reqBodyNode.hasNonNull("email") || !reqBodyNode.hasNonNull("pass")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing email or pass field in passed JSON");
+        }
+
+        String email = reqBodyNode.get("email").asText();
+        String password = reqBodyNode.get("pass").asText();
+
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                email,
+                password
+        ));
+
     }
 
     @Override
@@ -48,11 +63,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication auth) throws IOException, ServletException {
 
         String token = JWT.create()
-                .withSubject(((Customer) auth.getPrincipal()).getEmail())
+                .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(SECRET.getBytes()));
 
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
-
     }
 }

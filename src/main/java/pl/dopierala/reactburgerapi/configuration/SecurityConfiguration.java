@@ -2,6 +2,7 @@ package pl.dopierala.reactburgerapi.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import pl.dopierala.reactburgerapi.service.UserDetailsServiceImpl;
 
+import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.LOGIN_PROCESS_URL;
 import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.SIGN_UP_URL;
 
 @EnableWebSecurity
@@ -27,13 +29,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager());
+        jwtAuthenticationFilter.setFilterProcessesUrl(LOGIN_PROCESS_URL);
+
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.POST, LOGIN_PROCESS_URL).permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                    .permitAll()
+                    .usernameParameter("email")
+                    .passwordParameter("pass")
+                    .loginProcessingUrl(LOGIN_PROCESS_URL)
                 .and()
                 .csrf().disable()
                 .addFilterBefore(corsFilter(), CsrfFilter.class)
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(jwtAuthenticationFilter)
                 .addFilter(new JWTAuthorisationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //disables session creation on Spring Security
     }
@@ -59,5 +72,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 }
