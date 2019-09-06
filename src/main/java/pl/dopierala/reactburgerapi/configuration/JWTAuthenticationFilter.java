@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.*;
 
@@ -76,13 +77,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         JsonGenerator jsonGenerator = new JsonFactory().createGenerator(res.getWriter());
         jsonGenerator.writeStartObject();
             jsonGenerator.writeObjectFieldStart("auth");
                 jsonGenerator.writeStringField("email", ((User) auth.getPrincipal()).getUsername());
                 jsonGenerator.writeStringField("token", token);
-                jsonGenerator.writeStringField("expires", dateFormat.format(expiresAt));jsonGenerator.writeEndObject();
+                jsonGenerator.writeStringField("expiresGMT", dateFormat.format(expiresAt));jsonGenerator.writeEndObject();
             jsonGenerator.writeEndObject();
         jsonGenerator.close();
     }
