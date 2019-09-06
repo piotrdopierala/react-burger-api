@@ -2,6 +2,8 @@ package pl.dopierala.reactburgerapi.configuration;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -20,12 +22,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.*;
 
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
     private AuthenticationManager authenticationManager;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -54,7 +59,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 email,
                 password
         ));
-
     }
 
     @Override
@@ -63,12 +67,23 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
+        Date expiresAt = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
         String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .withExpiresAt(expiresAt)
                 .sign(Algorithm.HMAC512(SECRET.getBytes()));
 
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        JsonGenerator jsonGenerator = new JsonFactory().createGenerator(res.getWriter());
+        jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectFieldStart("auth");
+                jsonGenerator.writeStringField("email", ((User) auth.getPrincipal()).getUsername());
+                jsonGenerator.writeStringField("token", token);
+                jsonGenerator.writeStringField("expires", dateFormat.format(expiresAt));jsonGenerator.writeEndObject();
+            jsonGenerator.writeEndObject();
+        jsonGenerator.close();
     }
 }
