@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,12 +48,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON");
         }
 
-        if (!reqBodyNode.hasNonNull("email") || !reqBodyNode.hasNonNull("pass")) {
+        if (!reqBodyNode.hasNonNull("email") || !reqBodyNode.hasNonNull("password")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing email or pass field in passed JSON");
         }
 
         String email = reqBodyNode.get("email").asText();
-        String password = reqBodyNode.get("pass").asText();
+        String password = reqBodyNode.get("password").asText();
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 email,
@@ -84,7 +89,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             jsonGenerator.writeObjectFieldStart("auth");
                 jsonGenerator.writeStringField("email", ((User) auth.getPrincipal()).getUsername());
                 jsonGenerator.writeStringField("token", token);
-                jsonGenerator.writeStringField("expiresGMT", dateFormat.format(expiresAt));jsonGenerator.writeEndObject();
+                jsonGenerator.writeStringField("expiresGMT", dateFormat.format(expiresAt));
+                jsonGenerator.writeStringField("expiresIn", String.valueOf(EXPIRATION_TIME));
             jsonGenerator.writeEndObject();
         jsonGenerator.close();
     }

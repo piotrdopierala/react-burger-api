@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.HEADER_STRING;
 import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.SECRET;
@@ -29,6 +30,7 @@ public class JWTAuthorisationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
+        Enumeration<String> headers = req.getHeaderNames();
         String header = req.getHeader(HEADER_STRING);
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
@@ -45,7 +47,7 @@ public class JWTAuthorisationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
         String token = req.getHeader(HEADER_STRING);
-        if (token != null) {
+        if (token != null && token.length()>40) {
             String customer = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))

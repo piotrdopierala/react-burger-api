@@ -35,7 +35,8 @@ public class CustomerController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUp(@RequestBody String receivedData) {
+    public ResponseEntity<String> signUp(@RequestBody String receivedData) throws InterruptedException {
+        Thread.sleep(2000);
         String email, password;
         JsonNode jsonNode = null;
         try {
@@ -61,11 +62,6 @@ public class CustomerController {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No email and/or password data passed in request");
         }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> authenticate() {
-        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     @GetMapping("/secured")
