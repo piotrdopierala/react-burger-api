@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
-import pl.dopierala.reactburgerapi.model.Ingredient.IngredientSerializerIngrNameOnly;
+import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.ingredient.IngredientSerializerIngrNameOnly;
 
 import javax.persistence.*;
 import java.util.HashMap;

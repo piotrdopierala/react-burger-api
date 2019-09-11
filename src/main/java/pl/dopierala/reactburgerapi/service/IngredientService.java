@@ -2,7 +2,7 @@ package pl.dopierala.reactburgerapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.repository.IngredientRepo;
 
 import java.util.List;

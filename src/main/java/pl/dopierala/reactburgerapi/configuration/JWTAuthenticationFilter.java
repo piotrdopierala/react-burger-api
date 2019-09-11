@@ -14,7 +14,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.server.ResponseStatusException;
-import pl.dopierala.reactburgerapi.model.Customer;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

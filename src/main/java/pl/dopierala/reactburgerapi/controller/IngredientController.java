@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.service.IngredientService;
 
 import java.util.List;

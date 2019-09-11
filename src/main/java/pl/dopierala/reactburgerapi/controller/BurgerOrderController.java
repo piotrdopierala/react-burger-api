@@ -2,17 +2,14 @@ package pl.dopierala.reactburgerapi.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.IngredientNotFound;
 import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.InsufficientDataException;
 import pl.dopierala.reactburgerapi.model.Burger;
-import pl.dopierala.reactburgerapi.model.Customer;
-import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
-import pl.dopierala.reactburgerapi.model.Ingredient.IngredientSerializerIngrNameOnly;
+import pl.dopierala.reactburgerapi.model.customer.Customer;
+import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.service.BurgerOrderService;
 import pl.dopierala.reactburgerapi.service.IngredientService;
@@ -69,7 +66,7 @@ public class BurgerOrderController {
                 if(ingredientByName.isPresent()){
                     burgerToSave.addIngredient(ingredientByName.get(),ingredientCount);
                 }else{
-                    throw new IngredientNotFound("Ingredient named '"+ingredientName+"' not found.");
+                    throw new IngredientNotFound("ingredient named '"+ingredientName+"' not found.");
                 }
             }
         }
@@ -99,6 +96,12 @@ public class BurgerOrderController {
     @GetMapping("/getorders")
     public List<Order> getOrders() throws InterruptedException {
         Thread.sleep(1500); //simulate loading on front-end
-        return burgerOrderService.gerOrders();
+        return burgerOrderService.getOrders();
+    }
+
+    @GetMapping("/getorders/user")
+    public List<Order> getOrdersOfUser(@RequestBody String email) throws InterruptedException {
+        Thread.sleep(1000);
+        return burgerOrderService.getOrdersOfCustomerEmail(email);
     }
 }

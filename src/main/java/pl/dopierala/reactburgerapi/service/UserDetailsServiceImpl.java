@@ -1,12 +1,11 @@
 package pl.dopierala.reactburgerapi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import pl.dopierala.reactburgerapi.model.Customer;
+import pl.dopierala.reactburgerapi.model.customer.Customer;
 import pl.dopierala.reactburgerapi.repository.CustomerRepo;
 
 import java.util.Collections;

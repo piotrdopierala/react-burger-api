@@ -1,4 +1,8 @@
-package pl.dopierala.reactburgerapi.model;
+package pl.dopierala.reactburgerapi.model.customer;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import pl.dopierala.reactburgerapi.model.Order;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,6 +14,7 @@ public class Customer {
     private Long id;
     private String name;
     private String address;
+    @Column(unique = true)
     private String email;
     private String password;
     @OneToMany(mappedBy = "customer")

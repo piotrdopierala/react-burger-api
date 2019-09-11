@@ -1,9 +1,4 @@
-package pl.dopierala.reactburgerapi.model.Ingredient;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+package pl.dopierala.reactburgerapi.model.ingredient;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

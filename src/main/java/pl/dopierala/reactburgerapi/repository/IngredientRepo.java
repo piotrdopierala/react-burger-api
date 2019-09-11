@@ -1,7 +1,7 @@
 package pl.dopierala.reactburgerapi.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 
 import java.util.List;
 import java.util.Optional;

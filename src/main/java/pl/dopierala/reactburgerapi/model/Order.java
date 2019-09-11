@@ -1,12 +1,10 @@
 package pl.dopierala.reactburgerapi.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import pl.dopierala.reactburgerapi.model.customer.Customer;
+import pl.dopierala.reactburgerapi.model.deliveryData.DeliveryData;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 @Entity
@@ -15,11 +13,13 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER, mappedBy = "order")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "order")
     private List<Burger> orderedBurgers;
-    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn
     private Customer customer;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private DeliveryData deliveryData;
     private String deliveryMethod;
     private BigDecimal price;
 
@@ -64,5 +64,13 @@ public class Order {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public DeliveryData getDeliveryData() {
+        return deliveryData;
+    }
+
+    public void setDeliveryData(DeliveryData deliveryData) {
+        this.deliveryData = deliveryData;
     }
 }

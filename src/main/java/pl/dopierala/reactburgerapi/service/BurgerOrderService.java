@@ -3,12 +3,11 @@ package pl.dopierala.reactburgerapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.dopierala.reactburgerapi.model.Burger;
+import pl.dopierala.reactburgerapi.model.customer.Customer;
 import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.repository.BurgerRepo;
-import pl.dopierala.reactburgerapi.repository.CustomerRepo;
 import pl.dopierala.reactburgerapi.repository.OrderRepo;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -18,7 +17,7 @@ public class BurgerOrderService {
     private BurgerRepo burgerRepo;
 
     @Autowired
-    private CustomerRepo customerRepo;
+    private CustomerService customerService;
 
     @Autowired
     private OrderRepo orderRepo;
@@ -27,12 +26,21 @@ public class BurgerOrderService {
         return burgerRepo.findAll();
     }
 
-    public List<Order> gerOrders(){
+    public List<Order> getOrders(){
         return orderRepo.findAll();
     }
 
-    public void saveOrder(Order burger){
-        orderRepo.save(burger);
+    public List<Order> getOrdersOfCustomerEmail(String email){
+        return orderRepo.findAllByCustomerEmail(email);
+    }
+
+    public void saveOrder(Order orderToSave){
+
+        Customer customerFoundByEmail = customerService.getByEmail(orderToSave.getCustomer().getEmail());
+        if(customerFoundByEmail != null){
+            orderToSave.setCustomer(customerFoundByEmail);
+        }
+        orderRepo.save(orderToSave);
     }
 
 }

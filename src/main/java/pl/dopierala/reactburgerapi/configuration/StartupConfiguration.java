@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import pl.dopierala.reactburgerapi.model.Ingredient.Ingredient;
+import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.service.IngredientService;
 
 import java.util.Optional;
