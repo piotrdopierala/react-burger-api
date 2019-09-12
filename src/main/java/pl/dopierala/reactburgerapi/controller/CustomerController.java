@@ -51,6 +51,18 @@ public class CustomerController {
             Customer newCustomer = new Customer();
             newCustomer.setPassword(bCryptPasswordEncoder.encode(password));
             newCustomer.setEmail(email);
+            if(jsonNode.has("name")){
+                newCustomer.setName(jsonNode.get("name").asText());
+            }
+            if(jsonNode.has("street")){
+                newCustomer.setStreet(jsonNode.get("street").asText());
+            }
+            if(jsonNode.has("zipCode")){
+                newCustomer.setZipCode(jsonNode.get("zipCode").asText());
+            }
+            if(jsonNode.has("country")){
+                newCustomer.setCountry(jsonNode.get("country").asText());
+            }
             customerRepo.save(newCustomer);
 
             return new ResponseEntity<>(HttpStatus.ACCEPTED);

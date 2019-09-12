@@ -52,7 +52,7 @@ public class BurgerOrderController {
         try {
             customerThatOrdered.setName(orderData.get("name").asText());
             customerThatOrdered.setEmail(orderData.get("email").asText());
-            customerThatOrdered.setAddress(orderData.get("street").asText());
+            //customerThatOrdered.setAddress(orderData.get("street").asText());
 
 
             Iterator<String> ingredientsIterator = ingredientsNode.fieldNames();
