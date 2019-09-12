@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.IngredientNotFound;
+import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.IngredientNotFoundException;
 import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.InsufficientDataException;
 import pl.dopierala.reactburgerapi.model.Burger;
 import pl.dopierala.reactburgerapi.model.customer.Customer;
@@ -66,7 +66,7 @@ public class BurgerOrderController {
                 if(ingredientByName.isPresent()){
                     burgerToSave.addIngredient(ingredientByName.get(),ingredientCount);
                 }else{
-                    throw new IngredientNotFound("ingredient named '"+ingredientName+"' not found.");
+                    throw new IngredientNotFoundException("ingredient named '"+ingredientName+"' not found.");
                 }
             }
         }

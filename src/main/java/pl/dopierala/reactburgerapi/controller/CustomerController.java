@@ -9,8 +9,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pl.dopierala.reactburgerapi.errorHandling.exceptionDefinitions.CustomerEmailAlreadyRegisteredException;
 import pl.dopierala.reactburgerapi.model.customer.Customer;
+import pl.dopierala.reactburgerapi.model.customer.CustomerDTO;
 import pl.dopierala.reactburgerapi.repository.CustomerRepo;
+import pl.dopierala.reactburgerapi.service.CustomerService;
 
 import java.io.IOException;
 
@@ -18,58 +21,44 @@ import java.io.IOException;
 @RequestMapping("/burger/api/cust")
 public class CustomerController {
 
-    private CustomerRepo customerRepo;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private CustomerService customerService;
     private ObjectMapper objectMapper;
-    private AuthenticationManager authenticationManager;
 
-    public CustomerController(CustomerRepo customerRepo, BCryptPasswordEncoder bCryptPasswordEncoder, ObjectMapper objectMapper, AuthenticationManager authenticationManager) {
-        this.customerRepo = customerRepo;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public CustomerController(ObjectMapper objectMapper, CustomerService customerService) {
         this.objectMapper = objectMapper;
-        this.authenticationManager = authenticationManager;
+        this.customerService = customerService;
     }
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody String receivedData) throws InterruptedException {
-        Thread.sleep(2000);
-        String email, password;
+        Thread.sleep(1000);
+        CustomerDTO newCustomerDTO = new CustomerDTO();
         JsonNode jsonNode = null;
         try {
             jsonNode = objectMapper.readTree(receivedData);
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        if (jsonNode.has("email") && jsonNode.has("password")) {
-            email = jsonNode.get("email").asText();
-            password = jsonNode.get("password").asText();
 
-            if (customerRepo.existsByEmail(email)) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already registered, please log in");
-            }
-
-            Customer newCustomer = new Customer();
-            newCustomer.setPassword(bCryptPasswordEncoder.encode(password));
-            newCustomer.setEmail(email);
-            if(jsonNode.has("name")){
-                newCustomer.setName(jsonNode.get("name").asText());
-            }
-            if(jsonNode.has("street")){
-                newCustomer.setStreet(jsonNode.get("street").asText());
-            }
-            if(jsonNode.has("zipCode")){
-                newCustomer.setZipCode(jsonNode.get("zipCode").asText());
-            }
-            if(jsonNode.has("country")){
-                newCustomer.setCountry(jsonNode.get("country").asText());
-            }
-            customerRepo.save(newCustomer);
-
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
-
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No email and/or password data passed in request");
+        if (!jsonNode.has("email") || !jsonNode.has("password")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No email and/or password data passed in request");
         }
+
+        newCustomerDTO.email = jsonNode.get("email").asText();
+        newCustomerDTO.password = jsonNode.get("password").asText();
+        newCustomerDTO.name = jsonNode.get("name").asText();
+        newCustomerDTO.street = jsonNode.get("street").asText();
+        newCustomerDTO.zipCode = jsonNode.get("zipCode").asText();
+        newCustomerDTO.country = jsonNode.get("country").asText();
+
+        try {
+            customerService.saveNewCustomer(newCustomerDTO);
+        }catch (CustomerEmailAlreadyRegisteredException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+
     }
 
     @GetMapping("/secured")
