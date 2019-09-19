@@ -20,7 +20,6 @@ public class Order {
     private Customer customer;
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private DeliveryData deliveryData;
-    private String deliveryMethod;
     private BigDecimal price;
 
     public Order() {
@@ -48,14 +47,6 @@ public class Order {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
-    }
-
-    public String getDeliveryMethod() {
-        return deliveryMethod;
-    }
-
-    public void setDeliveryMethod(String deliveryMethod) {
-        this.deliveryMethod = deliveryMethod;
     }
 
     public BigDecimal getPrice() {

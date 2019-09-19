@@ -46,7 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .addFilterBefore(corsFilter(), CsrfFilter.class)
                 .addFilter(jwtAuthenticationFilter)
-                .addFilter(new JWTAuthorisationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorisationFilter(authenticationManager(),userDetailsService))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //disables session creation on Spring Security
 
 

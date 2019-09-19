@@ -2,7 +2,6 @@ package pl.dopierala.reactburgerapi.model.customer;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.dopierala.reactburgerapi.model.Order;
 
 import javax.persistence.*;
