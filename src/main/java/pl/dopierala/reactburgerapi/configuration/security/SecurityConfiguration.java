@@ -1,6 +1,8 @@
-package pl.dopierala.reactburgerapi.configuration;
+package pl.dopierala.reactburgerapi.configuration.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,18 +15,19 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import pl.dopierala.reactburgerapi.service.UserDetailsServiceImpl;
+import pl.dopierala.reactburgerapi.service.CustomerService;
 
-import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.LOGIN_PROCESS_URL;
-import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.SIGN_UP_URL;
+import static pl.dopierala.reactburgerapi.configuration.security.SecurityConstants.LOGIN_PROCESS_URL;
+import static pl.dopierala.reactburgerapi.configuration.security.SecurityConstants.SIGN_UP_URL;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsServiceImpl userDetailsService;
+    private CustomerService userDetailsService;
 
-    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    @Autowired
+    public SecurityConfiguration(@Lazy CustomerService customerService) {
+        this.userDetailsService = customerService;
     }
 
     @Override
@@ -45,10 +48,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(jwtAuthenticationFilter)
                 .addFilter(new JWTAuthorisationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //disables session creation on Spring Security
+
+
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
@@ -76,4 +82,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
+
 }

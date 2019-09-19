@@ -1,4 +1,4 @@
-package pl.dopierala.reactburgerapi.configuration;
+package pl.dopierala.reactburgerapi.configuration.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -14,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.server.ResponseStatusException;
+import pl.dopierala.reactburgerapi.model.customer.Customer;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.*;
+import static pl.dopierala.reactburgerapi.configuration.security.SecurityConstants.*;
 
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -60,10 +61,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             e.printStackTrace();
         }
 
-        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+        Authentication authResult = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 email,
                 password
         ));
+
+        return authResult;
     }
 
     @Override
@@ -74,7 +77,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Date expiresAt = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
         String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
+                .withSubject(((Customer) auth.getPrincipal()).getEmail())
                 .withExpiresAt(expiresAt)
                 .sign(Algorithm.HMAC512(SECRET.getBytes()));
 
@@ -86,7 +89,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         JsonGenerator jsonGenerator = new JsonFactory().createGenerator(res.getWriter());
         jsonGenerator.writeStartObject();
             jsonGenerator.writeObjectFieldStart("auth");
-                jsonGenerator.writeStringField("email", ((User) auth.getPrincipal()).getUsername());
+                jsonGenerator.writeStringField("email", ((Customer) auth.getPrincipal()).getEmail());
                 jsonGenerator.writeStringField("token", token);
                 jsonGenerator.writeStringField("expiresGMT", dateFormat.format(expiresAt));
                 jsonGenerator.writeStringField("expiresIn", String.valueOf(EXPIRATION_TIME));

@@ -1,4 +1,4 @@
-package pl.dopierala.reactburgerapi.configuration;
+package pl.dopierala.reactburgerapi.configuration.security;
 
 public class SecurityConstants {
     public static final String SECRET = "SecretToGenJWTs";

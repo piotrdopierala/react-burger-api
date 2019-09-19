@@ -1,4 +1,4 @@
-package pl.dopierala.reactburgerapi.configuration;
+package pl.dopierala.reactburgerapi.configuration.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.HEADER_STRING;
-import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.SECRET;
-import static pl.dopierala.reactburgerapi.configuration.SecurityConstants.TOKEN_PREFIX;
+import static pl.dopierala.reactburgerapi.configuration.security.SecurityConstants.HEADER_STRING;
+import static pl.dopierala.reactburgerapi.configuration.security.SecurityConstants.SECRET;
+import static pl.dopierala.reactburgerapi.configuration.security.SecurityConstants.TOKEN_PREFIX;
 
 public class JWTAuthorisationFilter extends BasicAuthenticationFilter {
 
