@@ -1,5 +1,6 @@
 package pl.dopierala.reactburgerapi.model.customer;
 
+import com.fasterxml.jackson.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.dopierala.reactburgerapi.model.Order;
@@ -11,6 +12,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityReference(alwaysAsId = true)
 public class Customer implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +26,10 @@ public class Customer implements UserDetails {
     @NotNull
     private String email;
     @NotNull
+    @JsonIgnore
     private String password;
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     @Column(name="order_id")
-
     private List<Order> orders = new ArrayList<>();
 
     public Customer() {

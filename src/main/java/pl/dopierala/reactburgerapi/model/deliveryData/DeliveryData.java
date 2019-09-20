@@ -1,5 +1,6 @@
 package pl.dopierala.reactburgerapi.model.deliveryData;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import pl.dopierala.reactburgerapi.model.Order;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class DeliveryData {
     private String email;
     @OneToOne
     @MapsId
+    @JsonIgnore
     private Order order;
 
     public DeliveryData() {

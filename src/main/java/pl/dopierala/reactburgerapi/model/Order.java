@@ -1,6 +1,8 @@
 package pl.dopierala.reactburgerapi.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import pl.dopierala.reactburgerapi.model.customer.Customer;
+import pl.dopierala.reactburgerapi.model.customer.CustomerSerializerIdAndEmailOnly;
 import pl.dopierala.reactburgerapi.model.deliveryData.DeliveryData;
 
 import javax.persistence.*;
@@ -17,6 +19,7 @@ public class Order {
     private List<Burger> orderedBurgers;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn
+    @JsonSerialize(using = CustomerSerializerIdAndEmailOnly.class)
     private Customer customer;
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private DeliveryData deliveryData;

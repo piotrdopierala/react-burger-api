@@ -108,15 +108,17 @@ public class BurgerOrderController {
         return objectNodeResponse.toString();
     }
 
-    @GetMapping("/getorders")
+    @GetMapping("/getorders/all")
     public List<Order> getOrders() throws InterruptedException {
         Thread.sleep(1500); //simulate loading on front-end
         return burgerOrderService.getOrders();
     }
 
     @GetMapping("/getorders/user")
-    public List<Order> getOrdersOfUser(@RequestBody String email) throws InterruptedException {
+
+    public List<Order> getOrdersOfUser(Authentication authentication) throws InterruptedException {
         Thread.sleep(1000);
-        return burgerOrderService.getOrdersOfCustomerEmail(email);
+        Customer principal = (Customer) authentication.getPrincipal();
+        return burgerOrderService.getOrdersOfCustomerEmail(principal.getEmail());
     }
 }
