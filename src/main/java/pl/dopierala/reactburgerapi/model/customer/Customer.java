@@ -6,6 +6,7 @@ import pl.dopierala.reactburgerapi.model.Order;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,11 +24,28 @@ public class Customer implements UserDetails {
     private String email;
     @NotNull
     private String password;
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     @Column(name="order_id")
-    private List<Order> order;
+
+    private List<Order> orders = new ArrayList<>();
 
     public Customer() {
+    }
+
+    public void addOrder(Order ord){
+        if(this.orders.contains(ord)){
+            return;
+        }
+        this.orders.add(ord);
+        ord.setCustomer(this);
+    }
+
+    public void removeOrder(Order ord){
+        if(!this.orders.contains(ord)){
+            return;
+        }
+        orders.remove(ord);
+        ord.setCustomer(null);
     }
 
     public Long getId() {

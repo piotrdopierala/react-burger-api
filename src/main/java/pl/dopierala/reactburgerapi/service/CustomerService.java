@@ -51,8 +51,10 @@ public class CustomerService implements UserDetailsService {
         if (customerFoundByEmail == null) {
             throw new UsernameNotFoundException(email);
         }
-
         return customerFoundByEmail;
     }
 
+    public Customer save(Customer customer) {
+        return customerRepo.save(customer);
+    }
 }

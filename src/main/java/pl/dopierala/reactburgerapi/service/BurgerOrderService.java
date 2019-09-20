@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import pl.dopierala.reactburgerapi.model.Burger;
 import pl.dopierala.reactburgerapi.model.customer.Customer;
 import pl.dopierala.reactburgerapi.model.Order;
+import pl.dopierala.reactburgerapi.model.deliveryData.DeliveryData;
 import pl.dopierala.reactburgerapi.repository.BurgerRepo;
+import pl.dopierala.reactburgerapi.repository.DeliveryRepo;
 import pl.dopierala.reactburgerapi.repository.OrderRepo;
 
 import java.util.List;
@@ -22,6 +24,9 @@ public class BurgerOrderService {
     @Autowired
     private OrderRepo orderRepo;
 
+    @Autowired
+    private DeliveryRepo deliveryRepo;
+
     public List<Burger> getBurgers() {
         return burgerRepo.findAll();
     }
@@ -35,11 +40,8 @@ public class BurgerOrderService {
     }
 
     public void saveOrder(Order orderToSave){
-
-        Customer customerFoundByEmail = customerService.getByEmail(orderToSave.getCustomer().getEmail());
-        if(customerFoundByEmail != null){
-            orderToSave.setCustomer(customerFoundByEmail);
-        }
+        DeliveryData deliveryData = deliveryRepo.save(orderToSave.getDeliveryData());
+        orderToSave.setDeliveryData(deliveryData);
         orderRepo.save(orderToSave);
     }
 

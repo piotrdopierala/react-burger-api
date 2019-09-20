@@ -13,9 +13,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "order")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "order")
     private List<Burger> orderedBurgers;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn
     private Customer customer;
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
@@ -63,5 +63,6 @@ public class Order {
 
     public void setDeliveryData(DeliveryData deliveryData) {
         this.deliveryData = deliveryData;
+        deliveryData.setOrder(this);
     }
 }

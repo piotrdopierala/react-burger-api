@@ -15,16 +15,15 @@ import pl.dopierala.reactburgerapi.model.deliveryData.DeliveryData;
 import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.model.Order;
 import pl.dopierala.reactburgerapi.service.BurgerOrderService;
+import pl.dopierala.reactburgerapi.service.CustomerService;
 import pl.dopierala.reactburgerapi.service.IngredientService;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/burger/api")
@@ -36,6 +35,9 @@ public class BurgerOrderController {
 
     @Autowired
     IngredientService ingredientService;
+
+    @Autowired
+    CustomerService customerService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -59,6 +61,7 @@ public class BurgerOrderController {
             deliveryData.setCountry(orderData.get("country").asText());
             deliveryData.setStreet(orderData.get("street").asText());
             deliveryData.setZipCode(orderData.get("zipCode").asText());
+            deliveryData.setDeliveryMethod(orderData.get("deliveryMethod").asText());
 
 
             Iterator<String> ingredientsIterator = ingredientsNode.fieldNames();
@@ -81,15 +84,21 @@ public class BurgerOrderController {
         }
 
         Order orderToSave = new Order();
-        orderToSave.setCustomer(customerLoggedInThatOrdered);
+
         orderToSave.setDeliveryData(deliveryData);
-        orderToSave.setOrderedBurgers(Collections.singletonList(burgerToSave));
+        ArrayList <Burger> orderedBurgers = new ArrayList<>();
+        orderedBurgers.add(burgerToSave);
+        orderToSave.setOrderedBurgers(orderedBurgers);
         double price = responseNode.get("price").asDouble();
         BigDecimal priceDecimal = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
         orderToSave.setPrice(priceDecimal);
 
+
+        customerLoggedInThatOrdered.addOrder(orderToSave);
         burgerToSave.setOrder(orderToSave);
 
+        customerLoggedInThatOrdered = customerService.save(customerLoggedInThatOrdered);
+        orderToSave.setCustomer(customerLoggedInThatOrdered);
         burgerOrderService.saveOrder(orderToSave);
         Thread.sleep(1000);//only to check spinner functionality on front-end.
 
