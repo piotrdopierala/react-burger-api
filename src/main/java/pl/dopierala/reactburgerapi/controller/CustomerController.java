@@ -56,13 +56,6 @@ public class CustomerController {
         }catch (CustomerEmailAlreadyRegisteredException e){
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
-
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
-
-    }
-
-    @GetMapping("/secured")
-    public String securedTest(@RequestParam("token") String token) {
-        return "SECURE INFORMATION";
     }
 }
