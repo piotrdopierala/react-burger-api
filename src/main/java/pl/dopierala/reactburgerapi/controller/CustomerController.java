@@ -46,14 +46,22 @@ public class CustomerController {
 
         newCustomerDTO.email = jsonNode.get("email").asText();
         newCustomerDTO.password = jsonNode.get("password").asText();
-        newCustomerDTO.name = jsonNode.get("name").asText();
-        newCustomerDTO.street = jsonNode.get("street").asText();
-        newCustomerDTO.zipCode = jsonNode.get("zipCode").asText();
-        newCustomerDTO.country = jsonNode.get("country").asText();
+        if (jsonNode.has("name")) {
+            newCustomerDTO.name = jsonNode.get("name").textValue();
+        }
+        if (jsonNode.has("street")) {
+            newCustomerDTO.street = jsonNode.get("street").textValue();
+        }
+        if (jsonNode.has("zipCode")) {
+            newCustomerDTO.zipCode = jsonNode.get("zipCode").textValue();
+        }
+        if (jsonNode.has("country")) {
+            newCustomerDTO.country = jsonNode.get("country").textValue();
+        }
 
         try {
             customerService.saveNewCustomer(newCustomerDTO);
-        }catch (CustomerEmailAlreadyRegisteredException e){
+        } catch (CustomerEmailAlreadyRegisteredException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.ACCEPTED);

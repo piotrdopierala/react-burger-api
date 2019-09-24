@@ -52,4 +52,5 @@ public class IngredientControllerTest {
                 .andExpect(jsonPath("$").value(hasSize(2)));
         verify(ingredientServiceMock,times(1)).getAllIngredientsByPrice();
     }
+
 }
