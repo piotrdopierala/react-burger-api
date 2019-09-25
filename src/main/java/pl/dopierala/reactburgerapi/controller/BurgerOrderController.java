@@ -115,7 +115,6 @@ public class BurgerOrderController {
     }
 
     @GetMapping("/getorders/user")
-
     public List<Order> getOrdersOfUser(Authentication authentication) throws InterruptedException {
         Thread.sleep(1000);
         Customer principal = (Customer) authentication.getPrincipal();
