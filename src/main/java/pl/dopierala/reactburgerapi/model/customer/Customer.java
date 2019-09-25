@@ -35,6 +35,11 @@ public class Customer implements UserDetails {
     public Customer() {
     }
 
+    public Customer(String name, @NotNull String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     public void addOrder(Order ord){
         if(this.orders.contains(ord)){
             return;
