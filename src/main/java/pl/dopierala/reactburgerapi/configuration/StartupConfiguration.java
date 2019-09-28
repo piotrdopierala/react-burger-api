@@ -30,6 +30,7 @@ public class StartupConfiguration {
         Ingredient baconIngr;
         Ingredient cheeseIngr;
         Ingredient meatIngr;
+        Ingredient startPriceIngr;
 
         Optional<Ingredient> saladInDB = ingredientService.getIngredientByName("salad");
         saladIngr = saladInDB.orElseGet(() -> new Ingredient("salad", 0.5));
@@ -43,10 +44,14 @@ public class StartupConfiguration {
         Optional<Ingredient> meatInDB = ingredientService.getIngredientByName("meat");
         meatIngr = meatInDB.orElseGet(() -> new Ingredient("meat", 1.3));
 
+        Optional<Ingredient> startPriceInDB = ingredientService.getIngredientByName("start-price");
+        startPriceIngr = startPriceInDB.orElseGet(() -> new Ingredient("start-price", 4.0));
+
         ingredientService.addIngredient(saladIngr);
         ingredientService.addIngredient(baconIngr);
         ingredientService.addIngredient(cheeseIngr);
         ingredientService.addIngredient(meatIngr);
+        ingredientService.addIngredient(startPriceIngr);
 
     }
 }
