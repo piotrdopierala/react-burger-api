@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import pl.dopierala.reactburgerapi.model.Order;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class DeliveryData {
@@ -14,8 +15,9 @@ public class DeliveryData {
     private String zipCode;
     private String country;
     private String deliveryMethod;
-    @Column(unique = true)
+    @Column
     private String email;
+    private BigDecimal price;
     @OneToOne
     @MapsId
     @JsonIgnore
@@ -86,5 +88,13 @@ public class DeliveryData {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

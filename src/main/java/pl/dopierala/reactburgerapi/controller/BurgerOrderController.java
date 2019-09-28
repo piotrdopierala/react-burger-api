@@ -48,7 +48,7 @@ public class BurgerOrderController {
     @PostMapping("/saveorder")
     public String saveOrder(@RequestBody String receivedJSON, Authentication authentication) throws IOException, InterruptedException {
 
-        //todo move price from order to delivery data, cleanup this controller (move business functionality to service)
+        //todo cleanup this controller (move business functionality to service)
 
         ObjectNode responseNode = mapper.readValue(receivedJSON, ObjectNode.class);
         JsonNode ingredientsNode = responseNode.get("ingredients");
@@ -90,7 +90,6 @@ public class BurgerOrderController {
         orderedBurgers.add(burgerToSave);
         orderToSave.setOrderedBurgers(orderedBurgers);
         double priceFromReq = responseNode.get("price").asDouble();
-
         double priceCounted = countPrice(burgerToSave).doubleValue();
 
         if (priceFromReq != priceCounted) {
@@ -98,7 +97,7 @@ public class BurgerOrderController {
         }
 
         BigDecimal priceDecimal = new BigDecimal(priceFromReq).setScale(2, RoundingMode.HALF_UP);
-        orderToSave.setPrice(priceDecimal);
+        deliveryData.setPrice(priceDecimal);
 
 
         customerLoggedInThatOrdered.addOrder(orderToSave);
@@ -125,6 +124,7 @@ public class BurgerOrderController {
                 .stream()
                 .map((ingr) -> allIngredientMapPrice.get(ingr.getKey().getName()).multiply(new BigDecimal(ingr.getValue())))
                 .reduce(allIngredientMapPrice.get("start-price"), BigDecimal::add);
+
     }
 
     @GetMapping("/getorders/all")
