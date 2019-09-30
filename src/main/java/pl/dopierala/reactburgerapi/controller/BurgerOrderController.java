@@ -2,6 +2,7 @@ package pl.dopierala.reactburgerapi.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,16 +66,13 @@ public class BurgerOrderController {
             deliveryData.setDeliveryMethod(orderData.get("deliveryMethod").asText());
 
 
-            Iterator<String> ingredientsIterator = ingredientsNode.fieldNames();
+            Iterator<JsonNode> ingredientsIterator = ingredientsNode.elements();
             while (ingredientsIterator.hasNext()) {
-                String ingredientName = ingredientsIterator.next();
-                int ingredientCount = ingredientsNode.get(ingredientName).asInt();
-                if (ingredientCount <= 0) {
-                    continue;
-                }
+                String ingredientName = ingredientsIterator.next().asText();
+
                 Optional<Ingredient> ingredientByName = ingredientService.getIngredientByName(ingredientName);
                 if (ingredientByName.isPresent()) {
-                    burgerToSave.addIngredient(ingredientByName.get(), ingredientCount);
+                    burgerToSave.addIngredient(ingredientByName.get());
                 } else {
                     throw new IngredientNotFoundException("ingredient named '" + ingredientName + "' not found.");
                 }
@@ -89,16 +87,14 @@ public class BurgerOrderController {
         ArrayList<Burger> orderedBurgers = new ArrayList<>();
         orderedBurgers.add(burgerToSave);
         orderToSave.setOrderedBurgers(orderedBurgers);
-        double priceFromReq = responseNode.get("price").asDouble();
-        double priceCounted = countPrice(burgerToSave).doubleValue();
+        BigDecimal priceFromReq = new BigDecimal(responseNode.get("price").asDouble()).setScale(2,RoundingMode.HALF_UP);
+        BigDecimal priceCounted = countPrice(burgerToSave);
 
-        if (priceFromReq != priceCounted) {
+        if (!priceFromReq.equals(priceCounted)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error checking Burger price, place order again.");
         }
 
-        BigDecimal priceDecimal = new BigDecimal(priceFromReq).setScale(2, RoundingMode.HALF_UP);
-        deliveryData.setPrice(priceDecimal);
-
+        deliveryData.setPrice(priceCounted);
 
         customerLoggedInThatOrdered.addOrder(orderToSave);
         burgerToSave.setOrder(orderToSave);
@@ -120,11 +116,9 @@ public class BurgerOrderController {
         test = test.add(new BigDecimal(2.0));
 
         return burger.getIngredients()
-                .entrySet()
                 .stream()
-                .map((ingr) -> allIngredientMapPrice.get(ingr.getKey().getName()).multiply(new BigDecimal(ingr.getValue())))
+                .map((ingr) -> allIngredientMapPrice.get(ingr.getName()))
                 .reduce(allIngredientMapPrice.get("start-price"), BigDecimal::add);
-
     }
 
     @GetMapping("/getorders/all")

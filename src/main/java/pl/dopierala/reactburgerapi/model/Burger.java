@@ -8,34 +8,35 @@ import pl.dopierala.reactburgerapi.model.ingredient.Ingredient;
 import pl.dopierala.reactburgerapi.model.ingredient.IngredientSerializerIngrNameOnly;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="burgers")
+@Table(name = "burgers")
 public class Burger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name="order_id")
+    @JoinColumn(name = "order_id")
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private Order order;
-    @ElementCollection
-    @CollectionTable(
-            joinColumns = @JoinColumn(name="burger_id")
-    )
-    @Column(name="count")
-    @MapKeyJoinColumn(name="ingredient_id")
+    @ManyToMany
+    @OrderColumn(name="ingr_order")
     @JsonSerialize(keyUsing = IngredientSerializerIngrNameOnly.class)
-    private Map<Ingredient,Integer> ingredients = new HashMap<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     public Burger() {
     }
 
-    public void addIngredient(Ingredient ingredient, int amount){
-        ingredients.merge(ingredient, amount, Integer::sum);
+    public void addIngredient(Ingredient ingredient, int position) {
+        ingredients.add(position, ingredient);
+        //ingredients.merge(ingredient, amount, Integer::sum);
+    }
+
+    public void addIngredient(Ingredient ingredient) {
+        ingredients.add(0, ingredient);
     }
 
     public Order getOrder() {
@@ -54,12 +55,11 @@ public class Burger {
         this.id = id;
     }
 
-    public Map<Ingredient, Integer> getIngredients() { //nie mozna persystowac takiej MAP gdzie key jest Entity, trzeba tworzyc dodatkowa encje
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<Ingredient, Integer> ingredients) {
+    public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
-
 }
